@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+//applyData is the function that will be provided by calling component
 const useHttp = (requestConfig, applyData) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
