@@ -1,18 +1,20 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
-//applyData is the function that will be provided by calling component
-const useHttp = (requestConfig, applyData) => {
+const useHttp = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const sendRequest = async () => {
+  //we use useCallback to avoid infinite loop 
+  //useCallback also need dependencies [] such as requestConfig and applyData but w edon'ty use them
+  //that guy provided very vague eplanation why
+  const sendRequest = useCallback(async (requestConfig, applyData) => {
     setIsLoading(true);
     setError(null);
     try {
       const response = await fetch(requestConfig.url, {
-        method: requestConfig.method,
-        headers: requestConfig.headers,
-        body: JSON.stringify(requestConfig.body),
+        method: requestConfig.method ? requestConfig.method : 'GET',
+        headers: requestConfig.headers ? requestConfig.headers : {},
+        body: requestConfig.body ? JSON.stringify(requestConfig.body) : null,
       });
 
       if (!response.ok) {
@@ -25,7 +27,7 @@ const useHttp = (requestConfig, applyData) => {
       setError(err.message || 'Something went wrong!');
     }
     setIsLoading(false);
-  };
+  }, []);
 
   return {
     isLoading,
